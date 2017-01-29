@@ -1,0 +1,29 @@
+{
+  "name": "ipgeobase",
+  "version": "0.0.1",
+  "description": "",
+  "main": "karma start",
+  "scripts": {
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yavulan/ipgeobase.git"
+  },
+  "author": "yavulan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yavulan/ipgeobase/issues"
+  },
+  "homepage": "https://github.com/yavulan/ipgeobase#readme",
+  "devDependencies": {
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.4.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jasmine": "^1.1.0",
+    "webpack": "^2.2.0"
+  },
+  "dependencies": {
+    "whatwg-fetch": "^2.0.2"
+  }
+}
