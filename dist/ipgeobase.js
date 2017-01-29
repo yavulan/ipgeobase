@@ -557,42 +557,37 @@ module.exports = __webpack_require__(2).default;
 
 var xmlParser_1 = __webpack_require__(3);
 var IpGeoBase = (function () {
-    function IpGeoBase(ip, inetnum, country, city, region, district, lat, lng) {
+    function IpGeoBase(ip) {
         var _this = this;
         this.ip = ip;
-        this.inetnum = inetnum;
-        this.country = country;
-        this.city = city;
-        this.region = region;
-        this.district = district;
-        this.lat = lat;
-        this.lng = lng;
+        this.cached = false;
         if (!IpGeoBase.regExpIpValidation.test(ip)) {
             throw new TypeError("Invalid IP provided");
         }
-        if (typeof (localStorage) !== "undefined") {
+        if (IpGeoBase.isStorageSupported) {
             var savedInformation_1 = localStorage.getItem(IpGeoBase.localStoragePrefix + this.ip);
             if (savedInformation_1) {
                 savedInformation_1 = JSON.parse(savedInformation_1);
                 if (Date.now() - +savedInformation_1.dateRetrieved < IpGeoBase.expireTimeForFetched) {
+                    this.cached = true;
                     IpGeoBase.ipInfoProperties.forEach(function (item) { return _this[item] = savedInformation_1[item]; }, this);
-                    console.log("used sorage");
                 }
             }
         }
-        if (!this.country) {
+        if (!this.cached) {
             fetch("http://ipgeobase.ru:7020/geo?ip=" + ip)
                 .then(function (response) { return response.text(); })
-                .catch(function (e) { throw new Error("Something went wrong during fetching from http://ipgeobase.ru:7020/" + e); })
+                .catch(function (e) { throw new Error("Something went wrong during fetching from http://ipgeobase.ru:7020/ " + e); })
                 .then(function (text) {
                 var parsedXml = xmlParser_1["default"].parse(text);
                 IpGeoBase.ipInfoProperties.forEach(function (item) { return _this[item] = xmlParser_1["default"].getXmlValue(parsedXml, item); }, _this);
-                if (typeof (localStorage) !== "undefined") {
+                if (IpGeoBase.isStorageSupported) {
                     var data_1 = {
                         "dateRetrieved": Date.now()
                     };
                     IpGeoBase.ipInfoProperties.forEach(function (item) { return data_1[item] = _this[item]; }, _this);
                     localStorage.setItem(IpGeoBase.localStoragePrefix + _this.ip, JSON.stringify(data_1));
+                    return data_1;
                 }
                 return parsedXml;
             });
@@ -602,6 +597,7 @@ var IpGeoBase = (function () {
     IpGeoBase.localStoragePrefix = "ipg_";
     IpGeoBase.expireTimeForFetched = 1000 * 60 * 60 * 24 * 7; // a week
     IpGeoBase.ipInfoProperties = ["inetnum", "country", "city", "region", "district", "lat", "lng"];
+    IpGeoBase.isStorageSupported = typeof (localStorage) !== "undefined";
     return IpGeoBase;
 }());
 exports.__esModule = true;
@@ -632,7 +628,7 @@ if (typeof window.DOMParser != "undefined") {
     throw new Error("No XML parser found");
 }
 
-// getting values
+// getting certain values from xml
 parseXml.getXmlValue = function (xml, parameterName) {
     return xml.getElementsByTagName(parameterName)[0].childNodes[0].nodeValue;
 };
