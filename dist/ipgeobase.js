@@ -569,8 +569,8 @@ var IpGeoBase = (function () {
             if (savedInformation_1) {
                 savedInformation_1 = JSON.parse(savedInformation_1);
                 if (Date.now() - +savedInformation_1.dateRetrieved < IpGeoBase.expireTimeForFetched) {
-                    this.cached = true;
                     IpGeoBase.ipInfoProperties.forEach(function (item) { return _this[item] = savedInformation_1[item]; }, this);
+                    this.cached = true;
                 }
             }
         }
@@ -587,9 +587,7 @@ var IpGeoBase = (function () {
                     };
                     IpGeoBase.ipInfoProperties.forEach(function (item) { return data_1[item] = _this[item]; }, _this);
                     localStorage.setItem(IpGeoBase.localStoragePrefix + _this.ip, JSON.stringify(data_1));
-                    return data_1;
                 }
-                return parsedXml;
             });
         }
     }
@@ -606,37 +604,40 @@ exports["default"] = IpGeoBase;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 // by Tim Down, edited by Alex Mattrick http://stackoverflow.com/users/2444246/alex-mattrick http://stackoverflow.com/users/96100/tim-down
 // from http://stackoverflow.com/a/7951947
-var parseXml = {};
-
+var parse;
 if (typeof window.DOMParser != "undefined") {
-    parseXml.parse = function(xmlStr) {
-        return ( new window.DOMParser() ).parseFromString(xmlStr, "text/xml");
+    parse = function (xmlStr) {
+        return (new window.DOMParser()).parseFromString(xmlStr, "text/xml");
     };
-} else if (typeof window.ActiveXObject != "undefined" &&
+}
+else if (typeof window.ActiveXObject != "undefined" &&
     new window.ActiveXObject("Microsoft.XMLDOM")) {
-    parseXml.parse = function(xmlStr) {
+    parse = function (xmlStr) {
         var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
         xmlDoc.async = "false";
         xmlDoc.loadXML(xmlStr);
         return xmlDoc;
     };
-} else {
+}
+else {
     throw new Error("No XML parser found");
 }
-
-// getting certain values from xml
-parseXml.getXmlValue = function (xml, parameterName) {
-    return xml.getElementsByTagName(parameterName)[0].childNodes[0].nodeValue;
+var parseXml = {
+    parse: parse,
+    // getting certain values from xml
+    getXmlValue: function (xml, parameterName) {
+        return xml.getElementsByTagName(parameterName)[0].childNodes[0].nodeValue;
+    }
 };
-
-module.exports = {
-    default: parseXml
-};
-
+exports.__esModule = true;
+exports["default"] = parseXml;
+//# sourceMappingURL=xmlParser.js.map
 
 /***/ }),
 /* 4 */

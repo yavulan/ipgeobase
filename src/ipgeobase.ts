@@ -1,4 +1,5 @@
 import parseXml from './xmlParser';
+declare const fetch: Function;
 
 interface IIpGeoBase {
     ip: string;
@@ -37,8 +38,8 @@ export default class IpGeoBase implements IIpGeoBase {
             if(savedInformation) {
                 savedInformation = JSON.parse(savedInformation);
                 if(Date.now() - +savedInformation.dateRetrieved < IpGeoBase.expireTimeForFetched){
-                    this.cached = true;
                     IpGeoBase.ipInfoProperties.forEach((item) => this[item] = savedInformation[item], this);
+                    this.cached = true;
                 }
             }
         }
@@ -57,10 +58,7 @@ export default class IpGeoBase implements IIpGeoBase {
                         };
                         IpGeoBase.ipInfoProperties.forEach((item) => data[item] = this[item], this);
                         localStorage.setItem(IpGeoBase.localStoragePrefix + this.ip, JSON.stringify(data));
-
-                        return data;
                     }
-                    return parsedXml;
                 });
         }
     }

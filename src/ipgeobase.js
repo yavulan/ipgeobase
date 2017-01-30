@@ -13,8 +13,8 @@ var IpGeoBase = (function () {
             if (savedInformation_1) {
                 savedInformation_1 = JSON.parse(savedInformation_1);
                 if (Date.now() - +savedInformation_1.dateRetrieved < IpGeoBase.expireTimeForFetched) {
-                    this.cached = true;
                     IpGeoBase.ipInfoProperties.forEach(function (item) { return _this[item] = savedInformation_1[item]; }, this);
+                    this.cached = true;
                 }
             }
         }
@@ -31,9 +31,7 @@ var IpGeoBase = (function () {
                     };
                     IpGeoBase.ipInfoProperties.forEach(function (item) { return data_1[item] = _this[item]; }, _this);
                     localStorage.setItem(IpGeoBase.localStoragePrefix + _this.ip, JSON.stringify(data_1));
-                    return data_1;
                 }
-                return parsedXml;
             });
         }
     }
